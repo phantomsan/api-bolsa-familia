@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>API</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+    <script>
+        var vApp;
+        function createVueInstancia() {
+            vApp = new Vue({
+                el: '#app',
+                data() {
+                    return {
+                        resultado: [{}],
+                        codigoIbge: 0,
+                        mesAno: 0,
+
+                    }
+                },
+                methods: {
+                    getDados: function () {
+                        const headersOrigin = {
+                            'Accept': 'application/json'
+                        }
+                        axios.get('http://www.transparencia.gov.br/api-de-dados/bolsa-familia-por-municipio?mesAno='
+                            + this.mesAno + '&codigoIbge=' + this.codigoIbge + '&pagina=1',
+                        ).then(function (response) {
+                            vApp.resultado = response.data;
+                            console.log(vApp.resultado);
+                        })
+                       
+                    },
+                }
+            })
+        }
+
+        function chamarApi() {
+
+            vApp.codigoIbge = document.getElementById("codigoIbge").value;
+            vApp.mesAno = document.getElementById("mesAno").value;
+            vApp.getDados();
+        }
+    </script>
+</head>
+
+<body onload="createVueInstancia();">
+    <div id="app">
+        <h1>API Bolsa família</h1>
+
+        <input type="text" id="mesAno" placeholder="anoMES">
+        <input type="text" id="codigoIbge" placeholder="cod. IBGE">
+        <input type="button" value="Enviar" onclick="chamarApi()">
+        <br>
+        <h2>Resultado da Pesquisa</h2>
+        <p>Valor: R${{resultado[0].valor}}</p>
+        <p>Quantidade beneficiados: {{resultado[0].quantidadeBeneficiados}}</p>
+
+    </div>
+</body>
+
+</html>
